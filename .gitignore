@@ -14,3 +14,4 @@ mokuro/
 
 # sqllite files
 *.db
+*.db-journal
