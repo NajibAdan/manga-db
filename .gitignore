@@ -11,3 +11,6 @@ wheels/
 
 # Mokuro files
 mokuro/
+
+# sqllite files
+*.db
