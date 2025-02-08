@@ -20,7 +20,7 @@ st.title("MangaDB - Stats on your favorite manga")
 
 # Manga selector
 selected_manga = st.sidebar.multiselect(
-    "Pick a manga", titles, default=["Berserk", "Bleach", "Naruto", "Dragon Ball"]
+    "# Pick a manga", titles, default=["Berserk", "Bleach", "Naruto", "Dragon Ball"]
 )
 
 # 4 columns to show the bar charts
@@ -121,6 +121,7 @@ scatter = (
     .encode(
         x=alt.X("num_of_chrs:Q", title="# of characters"),
         y=alt.Y("num_of_unique_chrs:Q", title="# of unique kanji"),
+        size=alt.Size("volume_count:Q", title="# of volumes"),
         tooltip=[
             alt.Tooltip("num_of_chrs:Q", title="# of characters", format=","),
             alt.Tooltip("volume_count:Q", title="# of volumes", format=","),
