@@ -42,13 +42,17 @@ def extract_page_text(page: List[dict]) -> str:
         "。".join(block.get("lines", [])) for block in page.get("blocks", [])
     )
 
+
 def generate_uuid() -> str:
     """
     Generates a UUID version 4 as a string
     """
     return str(uuid.uuid4())
 
-def process_volume_file(volume_file: Path, conn: sqlite3.Connection, title_uuid: str = None) -> None:
+
+def process_volume_file(
+    volume_file: Path, conn: sqlite3.Connection, title_uuid: str = None
+) -> None:
     """
     Process a single JSON file representing a volume:
     - Load the JSON
@@ -71,7 +75,7 @@ def process_volume_file(volume_file: Path, conn: sqlite3.Connection, title_uuid:
     title = data.get("title", "")
     volume_title = data.get("volume", "")
     if title_uuid is None:
-        title_uuid = generate_uuid()    
+        title_uuid = generate_uuid()
     volume_uuid = data.get("volume_uuid", "")
 
     cur = conn.cursor()
@@ -105,7 +109,7 @@ def main() -> None:
     with sqlite3.connect(db_path) as conn:
         create_tables(conn)
         for manga_dir in sorted(data_folder.iterdir()):
-            title_uuid = generate_uuid() # Sometimes a manga can have a different uuid for the same volume, lets make it constant
+            title_uuid = generate_uuid()  # Sometimes a manga can have a different uuid for the same volume, lets make it constant
             if manga_dir.is_dir():
                 logging.info(f"Processing manga: {manga_dir.name}")
                 for volume_file in sorted(manga_dir.iterdir()):
