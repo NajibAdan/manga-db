@@ -276,9 +276,6 @@ requires-dist = [
     { name = "streamlit", specifier = ">=1.42.0" },
 ]
 
-[package.metadata.requires-dev]
-streamlit = []
-
 [[package]]
 name = "narwhals"
 version = "1.25.2"

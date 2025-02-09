@@ -12,16 +12,17 @@ def create_tables(conn: sqlite3.Connection) -> None:
     """Create the necessary database tables if they don't already exist."""
     cur = conn.cursor()
     cur.execute("""
-        CREATE OR REPLACE TABLE IF NOT EXISTS Volumes (
+        CREATE TABLE IF NOT EXISTS Volumes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT,
             volume TEXT,
+            volume_number INTEGER,
             title_uuid TEXT,
             volume_uuid TEXT
         )
     """)
     cur.execute("""
-        CREATE OR REPLACE TABLE IF NOT EXISTS Pages (
+        CREATE TABLE IF NOT EXISTS Pages (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             volume_id INTEGER,
             page_number INTEGER,
@@ -51,7 +52,10 @@ def generate_uuid() -> str:
 
 
 def process_volume_file(
-    volume_file: Path, conn: sqlite3.Connection, title_uuid: str = None
+    volume_file: Path,
+    conn: sqlite3.Connection,
+    title_uuid: str = None,
+    volume_count: int = 1,
 ) -> None:
     """
     Process a single JSON file representing a volume:
@@ -81,10 +85,10 @@ def process_volume_file(
     cur = conn.cursor()
     cur.execute(
         """
-        INSERT INTO Volumes (title, volume, title_uuid, volume_uuid)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO Volumes (title, volume, volume_number, title_uuid, volume_uuid)
+        VALUES (?, ?, ?, ?, ?)
     """,
-        (title, volume_title, title_uuid, volume_uuid),
+        (title, volume_title, volume_count, title_uuid, volume_uuid),
     )
     volume_id = cur.lastrowid
 
@@ -110,11 +114,13 @@ def main() -> None:
         create_tables(conn)
         for manga_dir in sorted(data_folder.iterdir()):
             title_uuid = generate_uuid()  # Sometimes a manga can have a different uuid for the same volume, lets make it constant
+            volume_count = 1
             if manga_dir.is_dir():
                 logging.info(f"Processing manga: {manga_dir.name}")
                 for volume_file in sorted(manga_dir.iterdir()):
                     if volume_file.is_file() and volume_file.suffix == ".mokuro":
-                        process_volume_file(volume_file, conn, title_uuid)
+                        process_volume_file(volume_file, conn, title_uuid, volume_count)
+                        volume_count += 1
                     else:
                         logging.warning(f"Skipping non-JSON file: {volume_file.name}")
 
