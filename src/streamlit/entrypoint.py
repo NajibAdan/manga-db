@@ -14,6 +14,9 @@ titles = manga_dim["clean_title"].unique().tolist()
 st.sidebar.metric("Number of titles in the dataset", len(titles))
 
 pg = st.navigation(
-    [st.Page(home_view, title="Manga"), st.Page(manga_view, title="Volume")]
+    [
+        st.Page(home_view, title="Manga -- stats on manga"),
+        st.Page(manga_view, title="Volume -- stats per volume"),
+    ]
 )
 pg.run()

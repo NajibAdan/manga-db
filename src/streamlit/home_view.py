@@ -6,6 +6,7 @@ import altair as alt
 def home_view():
     # Query the table
     manga_dim = pd.read_csv("data/dim_manga.csv")
+    st.write("## This page shows basic statistics on mangas")
 
     titles = manga_dim["clean_title"].unique().tolist()
     # Manga selector

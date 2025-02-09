@@ -5,6 +5,9 @@ import altair as alt
 
 def manga_view():
     volume_dim = pd.read_csv("data/dim_volume.csv")
+    st.write(
+        "## This page shows in-depth statistics :tm: on selected manga and their volumes"
+    )
     titles = volume_dim["clean_title"].unique().tolist()
     # Manga selector
     selected_manga = st.selectbox(
