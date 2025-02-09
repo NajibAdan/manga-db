@@ -11,6 +11,8 @@ COPY src/streamlit/* /app/
 
 COPY data/dim_manga.csv /app/data/dim_manga.csv
 
+COPY data/dim_volume.csv /app/data/dim_volume.csv
+
 COPY pyproject.toml /app/pyproject.toml
 
 EXPOSE 8501
