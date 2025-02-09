@@ -65,5 +65,9 @@ with sqlite3.connect("manga_ocr.db") as con:
     )
     logging.info("Successfully run the volume query")
     volumes["clean_title"] = volumes["title"].str.replace("(Upscaled)", "").str.strip()
-    volumes.to_csv("data/dim_volume.csv", index=False)
+    volumes = volumes.sort_values(
+        by=["clean_title", "volume_number", "page_count", "length" ], ascending=[True, True, True, True]
+    )
+    volumes_dedup = volumes.drop_duplicates(subset=["clean_title","volume_number"])
+    volumes_dedup.to_csv("data/dim_volume.csv", index=False)
     logging.info("Extracted the data to the data folder")
