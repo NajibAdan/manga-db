@@ -7,7 +7,7 @@ WORKDIR /app
 #     software-properties-common \
 #     && rm -rf /var/lib/apt/lists/*
 
-COPY src/streamlit/view.py /app/streamlit_manga.py
+COPY src/streamlit/* /app/
 
 COPY data/dim_manga.csv /app/data/dim_manga.csv
 
@@ -19,4 +19,4 @@ RUN pip install .
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
-ENTRYPOINT ["streamlit", "run", "streamlit_manga.py", "--server.port=8501", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "entrypoint.py", "--server.port=8501", "--server.address=0.0.0.0"]
