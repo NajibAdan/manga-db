@@ -131,7 +131,7 @@ def home_view():
                 title="Average characters per volume",
                 bin=alt.Bin(maxbins=75),
             ),
-            y="count()",
+            y=alt.Y("count()", title="# of mangas"),
             tooltip=[
                 alt.Tooltip(
                     "count():Q",
