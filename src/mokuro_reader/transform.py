@@ -24,9 +24,9 @@ def extract_kanji(text):
 with sqlite3.connect("manga_ocr.db") as con:
     logging.info("Connected to the sqlite db")
     pages = pd.read_sql_query(
-        """select title, string_agg(text, '。') as text, count(p.page_number) as page_count, count(distinct v.volume) as volume_count from pages p 
+        """select title, title_uuid, string_agg(text, '。') as text, count(p.page_number) as page_count, count(distinct v.volume) as volume_count from pages p 
         inner join volumes v on v.id = p.volume_id 
-        group by v.title;""",
+        group by v.title, title_uuid;""",
         con,
     )
     logging.info("Successfully run the unified_view query")
@@ -47,6 +47,7 @@ with sqlite3.connect("manga_ocr.db") as con:
     logging.info("Completed cleaning the data")
     cols = [
         "clean_title",
+        "title_uuid",
         "volume_count",
         "page_count",
         "num_of_unique_chrs",
@@ -58,16 +59,17 @@ with sqlite3.connect("manga_ocr.db") as con:
     logging.info("Extracted the data to the data folder")
 
     volumes = pd.read_sql_query(
-        """select title, v.volume_number, length(string_agg(text, '。')) as length, count(p.page_number) as page_count from pages p 
+        """select title, title_uuid, v.volume_number, length(string_agg(text, '。')) as length, count(p.page_number) as page_count from pages p 
         inner join volumes v on v.id = p.volume_id 
-        group by v.title, volume_number;""",
+        group by v.title, title_uuid, volume_number;""",
         con,
     )
     logging.info("Successfully run the volume query")
     volumes["clean_title"] = volumes["title"].str.replace("(Upscaled)", "").str.strip()
     volumes = volumes.sort_values(
-        by=["clean_title", "volume_number", "page_count", "length" ], ascending=[True, True, True, True]
+        by=["clean_title", "volume_number", "page_count", "length"],
+        ascending=[True, True, True, True],
     )
-    volumes_dedup = volumes.drop_duplicates(subset=["clean_title","volume_number"])
+    volumes_dedup = volumes.drop_duplicates(subset=["clean_title", "volume_number"])
     volumes_dedup.to_csv("data/dim_volume.csv", index=False)
     logging.info("Extracted the data to the data folder")
