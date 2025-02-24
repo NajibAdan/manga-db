@@ -7,6 +7,8 @@ WORKDIR /app
 #     software-properties-common \
 #     && rm -rf /var/lib/apt/lists/*
 
+COPY .env /app/
+
 COPY src/streamlit/* /app/
 
 COPY data/* /app/data/
@@ -18,5 +20,7 @@ EXPOSE 8501
 RUN pip install .
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+
+RUN python add_analytics.py
 
 ENTRYPOINT ["streamlit", "run", "entrypoint.py", "--server.port=8501", "--server.address=0.0.0.0"]
